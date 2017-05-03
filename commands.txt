@@ -1,0 +1,11 @@
+roundedcorner - Enable rounded corner (won't work when 'circular' is enabled) (disabled by default).
+rotated - Lift the images with flat bottom (disabled by default).
+circular - Crop the images in circular (enabled by default).
+crop - Crop the images, instead of enlarge them with alpha (disabled by default).
+trim - Trim to smallest size by removing transparent pixels (enabled by default).
+shadow - Add shadow to image (not implemented yet) (enabled by default).
+higher - Lift the image high (won't work when 'rotated' is enabled) (disabled by default).
+keeparea - Leave the area unchanged (center by default).
+reset - Delete your file.
+help - Show this helpful message.
+settings - show current settings.
