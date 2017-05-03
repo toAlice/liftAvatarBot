@@ -18,8 +18,6 @@ import java.nio.file.Paths;
  * Created by alprc on 2017/4/27/027.
  */
 public class ImageProc {
-    private static int npes = 0;
-
     private static final int OVERLAY_WIDTH = 256;
     private static final int OVERLAY_HEIGHT = 256;
 
@@ -117,32 +115,32 @@ public class ImageProc {
         return imageInByteArray;
     }
 
-    public byte[] rotatedCircleCombine(byte[] overlay, int keepArea,
+    private byte[] rotatedCircleCombine(byte[] overlay, int keepArea,
                                      boolean isCrop, boolean trim, boolean shadow, boolean higher) {
         return combine(overlay, keepArea, CIRCLE_CORNER_RADIUS, true, isCrop, trim, shadow, higher);
     }
 
-    public byte[] rotatedRectangleCombine(byte[] overlay, int keepArea,
+    private byte[] rotatedRectangleCombine(byte[] overlay, int keepArea,
                                         boolean isCrop, boolean trim, boolean shadow, boolean higher) {
         return combine(overlay, keepArea, 0, true, isCrop, trim, shadow, higher);
     }
 
-    public byte[] rotatedRoundedRectangleCombine(byte[] overlay, int keepArea,
+    private byte[] rotatedRoundedRectangleCombine(byte[] overlay, int keepArea,
                                                boolean isCrop, boolean trim, boolean shadow, boolean higher) {
         return combine(overlay, keepArea, ROUNDED_CORNER_RADIUS, true, isCrop, trim, shadow, higher);
     }
 
-    public byte[] normalCircleCombine(byte[] overlay, int keepArea,
+    private byte[] normalCircleCombine(byte[] overlay, int keepArea,
                                     boolean isCrop, boolean trim, boolean shadow, boolean higher) {
         return combine(overlay, keepArea, CIRCLE_CORNER_RADIUS, false, isCrop, trim, shadow, higher);
     }
 
-    public byte[] normalRectangleCombine(byte[] overlay, int keepArea,
+    private byte[] normalRectangleCombine(byte[] overlay, int keepArea,
                                        boolean isCrop, boolean trim, boolean shadow, boolean higher) {
         return combine(overlay, keepArea, 0, false, isCrop, trim, shadow, higher);
     }
 
-    public byte[] normalRoundedRectangleCombine(byte[] overlay, int keepArea,
+    private byte[] normalRoundedRectangleCombine(byte[] overlay, int keepArea,
                                               boolean isCrop, boolean trim, boolean shadow, boolean higher) {
         return combine(overlay, keepArea, ROUNDED_CORNER_RADIUS, false, isCrop, trim, shadow, higher);
     }
@@ -219,7 +217,7 @@ public class ImageProc {
         if (crop) {
             bufferedOverlay = SquarifyImage.crop(bufferedOverlay, keepPosition);
         } else {
-            bufferedOverlay = SquarifyImage.notCrop(bufferedOverlay, keepPosition);
+            bufferedOverlay = SquarifyImage.nonCrop(bufferedOverlay, keepPosition);
         }
 
         bufferedOverlay = resize(bufferedOverlay, OVERLAY_WIDTH, OVERLAY_HEIGHT);

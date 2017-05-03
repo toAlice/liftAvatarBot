@@ -15,7 +15,6 @@ public class SquarifyImage {
     public static final int KEEP_CENTER_LEFT = 1 << 2;
     public static final int KEEP_CENTER_RIGHT = 1 << 3;
     public static final int KEEP_CENTER = 1 << 4;
-    // to be implemented...
     public static final int KEEP_TOP_LEFT = 1 << 5;
     public static final int KEEP_TOP_RIGHT = 1 << 6;
     public static final int KEEP_BOTTOM_LEFT = 1 << 7;
@@ -30,21 +29,42 @@ public class SquarifyImage {
         BufferedImage square;
 
         switch (cropMethod) {
-            case KEEP_TOP_CENTER:
+            case KEEP_TOP_LEFT: {
+                square = image.getSubimage(0, 0, edge, edge);
+            }
+            break;
+            case KEEP_TOP_CENTER: {
                 square = image.getSubimage((width - edge) / 2, 0, edge, edge);
-                break;
-            case KEEP_CENTER_LEFT:
+            }
+            break;
+            case KEEP_TOP_RIGHT: {
+                square = image.getSubimage(width - edge, 0, edge, edge);
+            }
+            break;
+            case KEEP_CENTER_LEFT: {
                 square = image.getSubimage(0, (height - edge) / 2, edge, edge);
-                break;
-            case KEEP_BOTTOM_CENTER:
-                square = image.getSubimage((width - edge) / 2, height - edge, edge, edge);
-                break;
-            case KEEP_CENTER_RIGHT:
-                square = image.getSubimage(width - edge, (height - edge) / 2, edge, edge);
-                break;
-            case KEEP_CENTER:
+            }
+            break;
+            case KEEP_CENTER: {
                 square = image.getSubimage((width - edge) / 2, (height - edge) / 2, edge, edge);
-                break;
+            }
+            break;
+            case KEEP_CENTER_RIGHT: {
+                square = image.getSubimage(width - edge, (height - edge) / 2, edge, edge);
+            }
+            break;
+            case KEEP_BOTTOM_LEFT: {
+                square = image.getSubimage(0, height - edge, edge, edge);
+            }
+            break;
+            case KEEP_BOTTOM_CENTER: {
+                square = image.getSubimage((width - edge) / 2, height - edge, edge, edge);
+            }
+            break;
+            case KEEP_BOTTOM_RIGHT: {
+                square = image.getSubimage(width - edge, height - edge, edge, edge);
+            }
+            break;
             default:
                 square = null;
         }
@@ -52,7 +72,7 @@ public class SquarifyImage {
         return square;
     }
 
-    static BufferedImage notCrop(BufferedImage image, int keepPosition) {
+    static BufferedImage nonCrop(BufferedImage image, int keepPosition) {
         int width = image.getWidth();
         int height = image.getHeight();
 
@@ -63,21 +83,42 @@ public class SquarifyImage {
         Graphics2D graphics = square.createGraphics();
 
         switch (keepPosition) {
-            case KEEP_TOP_CENTER:
+            case KEEP_TOP_LEFT: {
+                graphics.drawImage(image, 0, 0, null);
+            }
+            break;
+            case KEEP_TOP_CENTER: {
                 graphics.drawImage(image, (edge - width) / 2, 0, null);
-                break;
-            case KEEP_CENTER_RIGHT:
-                graphics.drawImage(image, edge - width, (edge - height) / 2, null);
-                break;
-            case KEEP_BOTTOM_CENTER:
-                graphics.drawImage(image, (edge - width) / 2, edge - height, null);
-                break;
-            case KEEP_CENTER_LEFT:
+            }
+            break;
+            case KEEP_TOP_RIGHT: {
+                graphics.drawImage(image, (edge - width), 0, null);
+            }
+            break;
+            case KEEP_CENTER_LEFT: {
                 graphics.drawImage(image, 0, (edge - height) / 2, null);
-                break;
-            case KEEP_CENTER:
+            }
+            break;
+            case KEEP_CENTER: {
                 graphics.drawImage(image, (edge - width) / 2, (edge - height) / 2, null);
-                break;
+            }
+            break;
+            case KEEP_CENTER_RIGHT: {
+                graphics.drawImage(image, edge - width, (edge - height) / 2, null);
+            }
+            break;
+            case KEEP_BOTTOM_LEFT: {
+                graphics.drawImage(image, 0, edge - height, null);
+            }
+            break;
+            case KEEP_BOTTOM_CENTER: {
+                graphics.drawImage(image, (edge - width) / 2, edge - height, null);
+            }
+            break;
+            case KEEP_BOTTOM_RIGHT: {
+                graphics.drawImage(image, edge - width, edge - height, null);
+            }
+            break;
             default:
                 square = image;
         }
@@ -91,19 +132,20 @@ public class SquarifyImage {
         int testCase = 2;
 
         switch (testCase) {
-            case 0: for (int i = 0; i < 5; i++) {
-                File overlay = new File("overlay.png");
+            case 0:
+                for (int i = 0; i < 5; i++) {
+                    File overlay = new File("overlay.png");
 
-                try {
-                    BufferedImage image = ImageIO.read(overlay);
+                    try {
+                        BufferedImage image = ImageIO.read(overlay);
 
-                    image = notCrop(image, KEEP_BOTTOM_CENTER);
+                        image = nonCrop(image, KEEP_BOTTOM_CENTER);
 
-                    ImageIO.write(image, "PNG", overlay);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                        ImageIO.write(image, "PNG", overlay);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
                 break;
             case 1: {
                 File overlay = new File("overlay.png");
@@ -111,7 +153,7 @@ public class SquarifyImage {
                 try {
                     BufferedImage image = ImageIO.read(overlay);
 
-                    image = notCrop(image, KEEP_CENTER_RIGHT);
+                    image = nonCrop(image, KEEP_CENTER_RIGHT);
 
                     ImageIO.write(image, "PNG", overlay);
                 } catch (IOException e) {
