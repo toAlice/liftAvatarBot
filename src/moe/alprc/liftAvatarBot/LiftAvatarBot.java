@@ -4,6 +4,7 @@ import moe.alprc.liftAvatarBot.image.ImageProc;
 import moe.alprc.liftAvatarBot.image.SquarifyImage;
 import moe.alprc.liftAvatarBot.settings.GetSettings;
 import moe.alprc.liftAvatarBot.settings.Settings;
+import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.api.methods.GetFile;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -26,6 +27,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static moe.alprc.liftAvatarBot.settings.GetSettings.deleteSettings;
 import static moe.alprc.liftAvatarBot.settings.GetSettings.editSettings;
@@ -68,39 +70,39 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
 
     // callback data
     private static final String commandsFilename = "commands.txt";
-    private static final String ENABLE_ROUNDED_CORNER = "enableRoundedCorner";
-    private static final String DISABLE_ROUNDED_CORNER = "disableRoundedCorner";
-    private static final String CANCEL_ROUNDED_CORNER = "cancelRoundedCorner";
-    private static final String ENABLE_ROTATED = "enableRotated";
-    private static final String DISABLE_ROTATED = "disableRotated";
-    private static final String CANCEL_ROTATED = "cancelRotated";
-    private static final String ENABLE_CIRCULAR = "enableCircular";
-    private static final String DISABLE_CIRCULAR = "disableCircular";
-    private static final String CANCEL_CIRCULAR = "cancelCircular";
-    private static final String ENABLE_CROP = "enableCrop";
-    private static final String DISABLE_CROP = "disableCrop";
-    private static final String CANCEL_CROP = "cancelCrop";
-    private static final String ENABLE_TRIM = "enableTrim";
-    private static final String DISABLE_TRIM = "disableTrim";
-    private static final String CANCEL_TRIM = "cancelTrim";
-    private static final String ENABLE_SHADOW = "enableShadow";
-    private static final String DISABLE_SHADOW = "disableShadow";
-    private static final String CANCEL_SHADOW = "cancelShadow";
-    private static final String ENABLE_HIGHER = "enableHigher";
-    private static final String DISABLE_HIGHER = "disableHigher";
-    private static final String CANCEL_HIGHER = "cancelHigher";
-    private static final String KEEP_TOP_LEFT = "keepTopLeft";
-    private static final String KEEP_TOP_CENTER = "keepTopCenter";
-    private static final String KEEP_TOP_RIGHT = "keepTopRight";
-    private static final String KEEP_CENTER_LEFT = "keepCenterLeft";
-    private static final String KEEP_CENTER = "keepCenter";
-    private static final String KEEP_CENTER_RIGHT = "keepCenterRight";
-    private static final String KEEP_BOTTOM_LEFT = "keepBottomLeft";
-    private static final String KEEP_BOTTOM_CENTER = "keepBottomCenter";
-    private static final String KEEP_BOTTOM_RIGHT = "keepBottomRight";
-    private static final String CANCEL_KEEP_AREA = "cancelKeepArea";
-    private static final String MAKE_RESET = "makeReset";
-    private static final String CANCEL_RESET = "cancelReset";
+    private static final String ENABLE_ROUNDED_CORNER = "0";
+    private static final String DISABLE_ROUNDED_CORNER = "1";
+    private static final String CANCEL_ROUNDED_CORNER = "2";
+    private static final String ENABLE_ROTATED = "3";
+    private static final String DISABLE_ROTATED = "4";
+    private static final String CANCEL_ROTATED = "5";
+    private static final String ENABLE_CIRCULAR = "6";
+    private static final String DISABLE_CIRCULAR = "7";
+    private static final String CANCEL_CIRCULAR = "8";
+    private static final String ENABLE_CROP = "9";
+    private static final String DISABLE_CROP = "A";
+    private static final String CANCEL_CROP = "B";
+    private static final String ENABLE_TRIM = "C";
+    private static final String DISABLE_TRIM = "D";
+    private static final String CANCEL_TRIM = "E";
+    private static final String ENABLE_SHADOW = "F";
+    private static final String DISABLE_SHADOW = "G";
+    private static final String CANCEL_SHADOW = "H";
+    private static final String ENABLE_HIGHER = "I";
+    private static final String DISABLE_HIGHER = "J";
+    private static final String CANCEL_HIGHER = "K";
+    private static final String KEEP_TOP_LEFT = "L";
+    private static final String KEEP_TOP_CENTER = "M";
+    private static final String KEEP_TOP_RIGHT = "N";
+    private static final String KEEP_CENTER_LEFT = "O";
+    private static final String KEEP_CENTER = "P";
+    private static final String KEEP_CENTER_RIGHT = "Q";
+    private static final String KEEP_BOTTOM_LEFT = "R";
+    private static final String KEEP_BOTTOM_CENTER = "S";
+    private static final String KEEP_BOTTOM_RIGHT = "T";
+    private static final String CANCEL_KEEP_AREA = "U";
+    private static final String MAKE_RESET = "V";
+    private static final String CANCEL_RESET = "W";
 
     private static int xu = 0;
     private static ByteBuffer bb = ByteBuffer.allocateDirect(1048576);
@@ -137,18 +139,23 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         class TempClass implements Runnable {
-            Update update;
+            private Update update;
 
             @Override
             public void run() {
-                if (update.getMessage() != null) {
+                // is message.
+                if (update.hasMessage()) {
                     long chatId = update.getMessage().getChatId();
                     Settings settings = GetSettings.getSettings(chatId);
+                    String username = update.getMessage().getFrom().getUserName();
 
                     if (update.getMessage().isCommand()) {
                         String text = "Your current setting is ";
                         String[] commands = update.getMessage().getText().split(" ");
                         String command = commands[0];
+
+                        System.out.println(username + "[" + chatId + "] " + command);
+
                         InlineKeyboardMarkup markup = null;
                         switch (command) {
                             case COMMAND_ROUNDED_CORNER: {
@@ -222,15 +229,15 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
                                 }
                                 ++xu;
                                 try (BufferedWriter bw = new BufferedWriter(new FileWriter(XU))) {
-                                    bw.write(xu);
+                                    bw.write("" + xu);
                                 } catch (IOException e) {
                                     //
                                 }
-                                text = "+1s. " + xu + "s in total.";
+                                text = "+1s. (" + xu + "s).";
                             }
                             break;
                             default:
-                                text = "Say what?";
+                                text = "Unrecognized command. Say what?";
                         }
 
                         SendMessage message;
@@ -238,11 +245,13 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
                             message = new SendMessage()
                                     .setChatId(update.getMessage().getChatId())
                                     .setText(text)
-                                    .setReplyMarkup(markup);
+                                    .setReplyMarkup(markup)
+                                    .setReplyToMessageId(update.getMessage().getMessageId());
                         } else {
                             message = new SendMessage()
                                     .setChatId(update.getMessage().getChatId())
-                                    .setText(text);
+                                    .setText(text)
+                                    .setReplyToMessageId(update.getMessage().getMessageId());
                         }
 
                         try {
@@ -254,12 +263,10 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
                         return;
                     }
 
-                    // is message
-                    if (update.hasMessage() &&
-                            // sticker or photo or photo as file
-                            (update.getMessage().getSticker() != null ||
-                                    update.getMessage().hasPhoto() ||
-                                    update.getMessage().hasDocument())) {
+                    // sticker or photo or photo as file
+                    if ((update.getMessage().getSticker() != null ||
+                                update.getMessage().hasPhoto() ||
+                                update.getMessage().hasDocument())) {
                         String FileId;
                         if (update.getMessage().hasPhoto()) { // receive photo
                             List<PhotoSize> li = update.getMessage().getPhoto();
@@ -272,18 +279,64 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
                         }
                         byte[] imageInByteArray = downloadImages(FileId);
 
+                        System.out.println(username + "[" + chatId + "] " + FileId);
+
                         imageInByteArray = imageProc.hub(imageInByteArray, settings);
 
                         SendDocument document = new SendDocument()
                                 .setChatId(update.getMessage().getChatId())
                                 .setNewDocument(FileId + ".webp",
-                                        new ByteArrayInputStream(imageInByteArray));
+                                        new ByteArrayInputStream(imageInByteArray))
+                                .setReplyToMessageId(update.getMessage().getMessageId());
 
                         try {
                             sendDocument(document);
                         } catch (TelegramApiException e) {
                             e.printStackTrace();
                         }
+
+                        return;
+                    }
+
+                    // is message
+                    if (update.getMessage().hasText()) {
+                        System.out.println(username + "[" + chatId + "] " + update.getMessage().getText());
+
+                        class GeneText {
+                            private final String[] rep = {
+                                    "Obviously",
+                                    "Obviously not",
+                                    "That doesn't sound very tasty at all",
+                                    "What's wrong?",
+                                    "Do you want to talk about it?",
+                                    "Get out",
+                                    "Not a question",
+                                    "That's a stupid question",
+                                    "Not really.",
+                                    "If it's from you... I don't mind.",
+                                    "NO.",
+                                    "YES.",
+                                    "I'm sure you understand. And if you don't maybe you should.",
+                            };
+
+                            private String randomText() {
+                                Random random = new Random(System.currentTimeMillis());
+                                return rep[Math.abs(random.nextInt()) % rep.length];
+                            }
+                        }
+
+                        SendMessage message = new SendMessage()
+                                .setChatId(update.getMessage().getChatId())
+                                .setReplyToMessageId(update.getMessage().getMessageId())
+                                .setText(new GeneText().randomText());
+
+                        try {
+                            sendMessage(message);
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
+
+                        return;
                     }
 
                     return;
@@ -294,6 +347,11 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
                 if ((cq = update.getCallbackQuery()) != null) {
                     String data = cq.getData();
                     long chatId = cq.getMessage().getChatId();
+                    String username = cq.getMessage().getFrom().getUserName();
+
+                    System.out.println(username + "[" + chatId + "] " + data);
+
+
                     String confirmText;
                     switch (data) {
                         case ENABLE_ROUNDED_CORNER: {
@@ -401,7 +459,7 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
                         case CANCEL_HIGHER:
                         case CANCEL_KEEP_AREA:
                         case CANCEL_RESET:{
-                            confirmText = "Request has been canceled.";
+                            confirmText = "Operation has been canceled.";
                         }
                         break;
                         default:
@@ -495,6 +553,7 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
 
         buttons.get(0).add(new InlineKeyboardButton().setText("Enable").setCallbackData(ENABLE_ROUNDED_CORNER));
         buttons.get(0).add(new InlineKeyboardButton().setText("Disable").setCallbackData(DISABLE_ROUNDED_CORNER));
+        buttons.get(0).add(new InlineKeyboardButton().setText("Cancel").setCallbackData(CANCEL_ROUNDED_CORNER));
 
         return new InlineKeyboardMarkup().setKeyboard(buttons);
     }
@@ -508,16 +567,16 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
 
         buttons.add(new ArrayList<>());
-
         buttons.get(0).add(new InlineKeyboardButton().setText("Enable").setCallbackData(ENABLE_ROTATED));
         buttons.get(0).add(new InlineKeyboardButton().setText("Disable").setCallbackData(DISABLE_ROTATED));
+        buttons.get(0).add(new InlineKeyboardButton().setText("Cancel").setCallbackData(CANCEL_ROTATED));
 
         return new InlineKeyboardMarkup().setKeyboard(buttons);
     }
 
     private static String setRotated(long chatId, boolean enable) {
         editSettings(chatId, GetSettings.EDIT_ROTATED, enable);
-        return settingChangedMessage("lift rotated images", enable);
+        return settingChangedMessage("rotate the images", enable);
     }
 
     private static InlineKeyboardMarkup commandCircular() {
@@ -526,6 +585,7 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
         buttons.add(new ArrayList<>());
         buttons.get(0).add(new InlineKeyboardButton().setText("Enable").setCallbackData(ENABLE_CIRCULAR));
         buttons.get(0).add(new InlineKeyboardButton().setText("Disable").setCallbackData(DISABLE_CIRCULAR));
+        buttons.get(0).add(new InlineKeyboardButton().setText("Cancel").setCallbackData(CANCEL_CIRCULAR));
 
         return new InlineKeyboardMarkup().setKeyboard(buttons);
     }
@@ -541,6 +601,7 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
         buttons.add(new ArrayList<>());
         buttons.get(0).add(new InlineKeyboardButton().setText("Enable").setCallbackData(ENABLE_CROP));
         buttons.get(0).add(new InlineKeyboardButton().setText("Disable").setCallbackData(DISABLE_CROP));
+        buttons.get(0).add(new InlineKeyboardButton().setText("Cancel").setCallbackData(CANCEL_CROP));
 
         return new InlineKeyboardMarkup().setKeyboard(buttons);
     }
@@ -556,6 +617,7 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
         buttons.add(new ArrayList<>());
         buttons.get(0).add(new InlineKeyboardButton().setText("Enable").setCallbackData(ENABLE_TRIM));
         buttons.get(0).add(new InlineKeyboardButton().setText("Disable").setCallbackData(DISABLE_TRIM));
+        buttons.get(0).add(new InlineKeyboardButton().setText("Cancel").setCallbackData(CANCEL_TRIM));
 
         return new InlineKeyboardMarkup().setKeyboard(buttons);
     }
@@ -571,6 +633,7 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
         buttons.add(new ArrayList<>());
         buttons.get(0).add(new InlineKeyboardButton().setText("Enable").setCallbackData(ENABLE_SHADOW));
         buttons.get(0).add(new InlineKeyboardButton().setText("Disable").setCallbackData(DISABLE_SHADOW));
+        buttons.get(0).add(new InlineKeyboardButton().setText("Cancel").setCallbackData(CANCEL_SHADOW));
 
         return new InlineKeyboardMarkup().setKeyboard(buttons);
     }
@@ -586,6 +649,7 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
         buttons.add(new ArrayList<>());
         buttons.get(0).add(new InlineKeyboardButton().setText("Enable").setCallbackData(ENABLE_HIGHER));
         buttons.get(0).add(new InlineKeyboardButton().setText("Disable").setCallbackData(DISABLE_HIGHER));
+        buttons.get(0).add(new InlineKeyboardButton().setText("Cancel").setCallbackData(CANCEL_HIGHER));
 
         return new InlineKeyboardMarkup().setKeyboard(buttons);
     }
@@ -599,24 +663,26 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
 
         buttons.add(new ArrayList<>());
-        buttons.get(0).add(new InlineKeyboardButton().setText("    ").setCallbackData(KEEP_TOP_LEFT));
-        buttons.get(0).add(new InlineKeyboardButton().setText("    ").setCallbackData(KEEP_TOP_CENTER));
-        buttons.get(0).add(new InlineKeyboardButton().setText("    ").setCallbackData(KEEP_TOP_RIGHT));
+        buttons.get(0).add(new InlineKeyboardButton().setText(" ").setCallbackData(KEEP_TOP_LEFT));
+        buttons.get(0).add(new InlineKeyboardButton().setText(" ").setCallbackData(KEEP_TOP_CENTER));
+        buttons.get(0).add(new InlineKeyboardButton().setText(" ").setCallbackData(KEEP_TOP_RIGHT));
         buttons.add(new ArrayList<>());
-        buttons.get(1).add(new InlineKeyboardButton().setText("    ").setCallbackData(KEEP_CENTER_LEFT));
-        buttons.get(1).add(new InlineKeyboardButton().setText("    ").setCallbackData(KEEP_CENTER));
-        buttons.get(1).add(new InlineKeyboardButton().setText("    ").setCallbackData(KEEP_CENTER_RIGHT));
+        buttons.get(1).add(new InlineKeyboardButton().setText(" ").setCallbackData(KEEP_CENTER_LEFT));
+        buttons.get(1).add(new InlineKeyboardButton().setText(" ").setCallbackData(KEEP_CENTER));
+        buttons.get(1).add(new InlineKeyboardButton().setText(" ").setCallbackData(KEEP_CENTER_RIGHT));
         buttons.add(new ArrayList<>());
-        buttons.get(2).add(new InlineKeyboardButton().setText("    ").setCallbackData(KEEP_BOTTOM_LEFT));
-        buttons.get(2).add(new InlineKeyboardButton().setText("    ").setCallbackData(KEEP_BOTTOM_CENTER));
-        buttons.get(2).add(new InlineKeyboardButton().setText("    ").setCallbackData(KEEP_BOTTOM_RIGHT));
+        buttons.get(2).add(new InlineKeyboardButton().setText(" ").setCallbackData(KEEP_BOTTOM_LEFT));
+        buttons.get(2).add(new InlineKeyboardButton().setText(" ").setCallbackData(KEEP_BOTTOM_CENTER));
+        buttons.get(2).add(new InlineKeyboardButton().setText(" ").setCallbackData(KEEP_BOTTOM_RIGHT));
+        buttons.add(new ArrayList<>());
+        buttons.get(3).add(new InlineKeyboardButton().setText("Cancel").setCallbackData(CANCEL_KEEP_AREA));
 
         return new InlineKeyboardMarkup().setKeyboard(buttons);
     }
 
     private static String setKeepArea(long chatId, int cropMethod) {
         editSettings(chatId, cropMethod);
-        return settingChangedMessage("Crop area", getKeepArea(cropMethod));
+        return settingChangedMessage("Keep area", getKeepArea(cropMethod));
     }
 
     private static InlineKeyboardMarkup commandReset() {
@@ -624,6 +690,7 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
 
         buttons.add(new ArrayList<>());
         buttons.get(0).add(new InlineKeyboardButton().setText("Reset").setCallbackData(MAKE_RESET));
+        buttons.get(0).add(new InlineKeyboardButton().setText("Cancel").setCallbackData(CANCEL_RESET));
 
         return new InlineKeyboardMarkup()
                 .setKeyboard(buttons);
@@ -688,7 +755,7 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
         String keepArea = getKeepArea(settings.getKeepArea());
 
         StringBuilder builder = new StringBuilder();
-        builder.append("The bot's settings for you: ").append(endl)
+        builder.append("Your current settings are: ").append(endl)
                 .append(endl);
         if (settings.isCircular()) builder.append("(Ignore) ");
         builder.append("Rounded Corner: ").append(settings.isRoundedCorner()).append(endl);
@@ -712,4 +779,5 @@ public class LiftAvatarBot extends TelegramLongPollingBot {
 
         return helpText;
     }
+
 }
